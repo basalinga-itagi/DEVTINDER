@@ -41,9 +41,29 @@ app.get("/users", async (req, res) => {
     }else{
       res.status(200).json(users);
     }
-    
+
   } catch (error) {
     console.error("Error fetching users:", error);
+    res.status(500).send("Internal Server Error", error.message);
+  }
+});
+
+app.patch("/users", async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).send("Internal Server Error", error.message);
+  }
+});
+
+app.delete("/users", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.body.id);
+    res.status(200).send("User deleted successfully");
+  } catch (error) {
+    console.error("Error deleting user:", error);
     res.status(500).send("Internal Server Error", error.message);
   }
 });
