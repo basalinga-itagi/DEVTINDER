@@ -29,7 +29,7 @@ app.post("/signup", async (req, res) => {
     res.status(200).send("User registered successfully");
   } catch (error) {
     console.error("Error registering user:", error);
-    res.status(500).send("Internal Server Error", error.message);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 });
 
@@ -37,34 +37,34 @@ app.get("/users", async (req, res) => {
   try {
     const users = await User.find({email: req.body.email}); // Fetch users with non-null email
     if (users.length === 0) {
-      return res.status(404).send("User not found");
+      return res.status(404).json({ error: "User not found" });
     }else{
       res.status(200).json(users);
     }
 
   } catch (error) {
     console.error("Error fetching users:", error);
-    res.status(500).send("Internal Server Error", error.message);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 });
 
 app.patch("/users", async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.body.id, req.body, { new: true });
+    const user = await User.findByIdAndUpdate(req.body.id, req.body, { new: true, runValidators: true });
     res.status(200).json(user);
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).send("Internal Server Error", error.message);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 });
 
 app.delete("/users", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.body.id);
-    res.status(200).send("User deleted successfully");
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error);
-    res.status(500).send("Internal Server Error", error.message);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 });
 //Always connect to the database before starting the server
